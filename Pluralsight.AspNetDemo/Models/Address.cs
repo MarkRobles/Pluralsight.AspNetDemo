@@ -5,11 +5,11 @@ using System.Web;
 
 namespace Pluralsight.AspNetDemo.Models
 {
-    public class RegisterModel
+    public class Address
     {
-        public string UserName { get; set; }
-        public string Password { get; set; }
-        public string FullName { get; set; }
+        public string Id { get; set; } = Guid.NewGuid().ToString();
+        public string UserId { get; set; }
+
         public string AddressLine { get; set; }
         public string Country { get; set; }
     }
