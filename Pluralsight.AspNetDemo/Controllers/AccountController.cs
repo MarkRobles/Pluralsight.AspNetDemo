@@ -15,8 +15,8 @@ namespace Pluralsight.AspNetDemo.Controllers
 {
     public class AccountController : Controller
     {
-        public UserManager<IdentityUser> UserManager => HttpContext.GetOwinContext().Get<UserManager<IdentityUser>>();
-        public SignInManager<IdentityUser, string> SignInManager => HttpContext.GetOwinContext().Get<SignInManager<IdentityUser, string>>();
+        public UserManager<ExtendedUser> UserManager => HttpContext.GetOwinContext().Get<UserManager<ExtendedUser>>();
+        public SignInManager<ExtendedUser, string> SignInManager => HttpContext.GetOwinContext().Get<SignInManager<ExtendedUser, string>>();
 
 
         public ActionResult Login() {
@@ -47,11 +47,26 @@ namespace Pluralsight.AspNetDemo.Controllers
         [HttpPost]
         public  async Task<ActionResult> Register(RegisterModel model) {
 
+            var user = new ExtendedUser
+            {
+                UserName = model.UserName,
+                FullName = model.FullName
 
-        var identityResult =  await  UserManager.CreateAsync(new IdentityUser(model.UserName), model.Password);
+            };
+            user.Addresses.Add(new Address
+            {
+                AddressLine = model.AddressLine,
+                Country = model.Country,
+                UserId = user.Id
+            });
+
+        var identityResult =  await  UserManager.CreateAsync(user, model.Password);
             if (identityResult.Succeeded) {
                 return RedirectToAction("Index","Home");
             }
+
+
+            
 
             ModelState.AddModelError("", identityResult.Errors.FirstOrDefault());
             return View(model);
