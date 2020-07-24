@@ -9,15 +9,36 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.UI.WebControls;
 
 namespace Pluralsight.AspNetDemo.Controllers
 {
     public class AccountController : Controller
     {
         public UserManager<IdentityUser> UserManager => HttpContext.GetOwinContext().Get<UserManager<IdentityUser>>();
+        public SignInManager<IdentityUser, string> SignInManager => HttpContext.GetOwinContext().Get<SignInManager<IdentityUser, string>>();
 
 
+        public ActionResult Login() {
+            return View();
+        }
 
+        [HttpPost]
+        public async Task<ActionResult> Login(LoginModel model)
+        {
+         var signInStatus = await   SignInManager.PasswordSignInAsync(model.UserName, model.Password,true,true);
+            switch (signInStatus)
+            {
+                case SignInStatus.Success:
+                    return RedirectToAction("Index","Home");
+                              
+                default:
+                    ModelState.AddModelError("","Invalid Credentials");
+                    return View(model);           
+            }
+        }
+
+       
         public ActionResult Register() {
             return View();
         }

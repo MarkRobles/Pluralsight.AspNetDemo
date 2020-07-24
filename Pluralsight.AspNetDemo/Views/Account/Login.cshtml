@@ -1,0 +1,17 @@
+﻿
+@model Pluralsight.AspNetDemo.Models.LoginModel
+
+
+<h1>LogIn</h1>
+<hr>
+@using (Html.BeginForm("Login", "Account", FormMethod.Post))
+{
+    @Html.ValidationSummary()
+    @Html.LabelFor(x => x.UserName);
+    @Html.TextBoxFor(x => x.UserName);
+    <br>
+    @Html.LabelFor(x => x.Password);
+    @Html.TextBoxFor(x => x.Password);
+    <br>
+    <input type="submit" class="btn" value="Login">
+}
