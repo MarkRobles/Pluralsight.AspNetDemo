@@ -8,6 +8,7 @@ using Owin;
 using Microsoft.Owin.Security.Cookies;
 using Pluralsight.AspNetDemo.DAL;
 using Pluralsight.AspNetDemo.Models;
+using Pluralsight.AspNetDemo.Services;
 
 [assembly: OwinStartup(typeof(Pluralsight.AspNetDemo.Startup))]
 
@@ -22,8 +23,15 @@ namespace Pluralsight.AspNetDemo
             const string connectionstring = "Data Source=(LocalDb)\\MSSQLLocalDB;Initial Catalog=Pluralsight.AspNetIdentityDemo.Module2.2;Integrated Security=SSPI;";
             app.CreatePerOwinContext(() => new ExtendedUserDbContext(connectionstring));
             app.CreatePerOwinContext<UserStore<ExtendedUser>>((opt, cont) => new UserStore<ExtendedUser>(cont.Get<ExtendedUserDbContext>()));
+           //I modify this for 2FV
             app.CreatePerOwinContext<UserManager<ExtendedUser>>(
-                (opt, cont) => new UserManager<ExtendedUser>(cont.Get<UserStore<ExtendedUser>>()));
+                (opt, cont) =>
+                {
+                    var usermanager = new UserManager<ExtendedUser>(cont.Get<UserStore<ExtendedUser>>());
+                    usermanager.RegisterTwoFactorProvider("SMS", new PhoneNumberTokenProvider<ExtendedUser>() { MessageFormat ="Token{0}"});
+                    usermanager.SmsService = new SmsService();
+                    return usermanager;
+                });
         
 
             //Cookie stuff
@@ -36,6 +44,9 @@ namespace Pluralsight.AspNetDemo
             {
                 AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie
             });
+
+            app.UseTwoFactorSignInCookie(DefaultAuthenticationTypes.TwoFactorCookie, TimeSpan.FromMinutes(5));
+            app.UseTwoFactorRememberBrowserCookie(DefaultAuthenticationTypes.TwoFactorRememberBrowserCookie);
         }
     }
 }
