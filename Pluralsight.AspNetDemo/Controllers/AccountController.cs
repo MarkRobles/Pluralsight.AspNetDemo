@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
+using Microsoft.Owin.Security;
 using Pluralsight.AspNetDemo.Models;
 using System;
 using System.Collections.Generic;
@@ -159,6 +160,42 @@ namespace Pluralsight.AspNetDemo.Controllers
             }
             return RedirectToAction("Index", "Home");
 
+        }
+
+        public ActionResult ExternalAuthentication(string provider)
+        {
+            SignInManager.AuthenticationManager.Challenge(
+                new AuthenticationProperties
+                {
+                    RedirectUri = Url.Action("ExternalCallback", new { provider })
+                }, provider);
+            return new HttpUnauthorizedResult();
+
+        }
+
+        public async Task<ActionResult> ExternalCallback(string provider)
+        {
+            var loginInfo = await SignInManager.AuthenticationManager.GetExternalLoginInfoAsync();
+            var signInStatus = await SignInManager.ExternalSignInAsync(loginInfo, true);
+
+            switch (signInStatus)
+            {
+                case SignInStatus.Success:
+                    return RedirectToAction("Index", "Home");
+
+                default:
+                    var user = await UserManager.FindByEmailAsync(loginInfo.Email);
+                    if (user != null)
+                    {
+                        var result = await UserManager.AddLoginAsync(user.Id, loginInfo.Login);
+                        if (result.Succeeded)
+                        {
+                            return await ExternalCallback(provider);
+                        }
+                    }
+                    return View("Error");
+
+            }
         }
     }
 }

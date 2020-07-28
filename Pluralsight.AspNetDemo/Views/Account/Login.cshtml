@@ -17,3 +17,23 @@
 }
 
 @Html.ActionLink("Forgot Password?","ForgotPassword")
+
+<div class="col-12">
+    @{
+        var providers = Context.GetOwinContext().Authentication.GetAuthenticationTypes();
+
+        if (providers != null && providers.Any())
+        {
+            using (Html.BeginForm("ExternalAuthentication", "Account", FormMethod.Post))
+            {
+                foreach (var provider in providers)
+                {
+                    <button class="btn" value="@provider.AuthenticationType" name="provider" type="submit">
+                        @provider.Caption
+                    </button>
+                }
+
+            }
+        }
+    }
+</div>
