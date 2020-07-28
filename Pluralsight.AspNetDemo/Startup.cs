@@ -44,6 +44,11 @@ namespace Pluralsight.AspNetDemo
                         RequireNonLetterOrDigit = true,
                         RequireUppercase = true
                     };
+
+                    //Configure User lock   Out
+                    usermanager.UserLockoutEnabledByDefault = true;
+                    usermanager.MaxFailedAccessAttemptsBeforeLockout = 2;
+                    usermanager.DefaultAccountLockoutTimeSpan = TimeSpan.FromMinutes(3);
                     return usermanager;
                 });
         

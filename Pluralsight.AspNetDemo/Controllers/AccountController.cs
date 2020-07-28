@@ -36,7 +36,15 @@ namespace Pluralsight.AspNetDemo.Controllers
                
                 case SignInStatus.RequiresVerification:
                     return RedirectToAction("ChooseProvider");
-                              
+                case SignInStatus.LockedOut:
+                    var user = await UserManager.FindByNameAsync(model.UserName);
+
+                    if (user != null)
+                    {
+                    
+                        await UserManager.SendEmailAsync(user.Id, "LockoutEmail", $"Hi  {user.UserName}, You have been locked out due to repeated, failed login attemps, Please try to reset your password");
+                    }
+                    return RedirectToAction("Index", "Home");
                 default:
                     ModelState.AddModelError("","Invalid Credentials");
                     return View(model);           
