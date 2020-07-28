@@ -86,7 +86,8 @@ namespace Pluralsight.AspNetDemo.Controllers
             var user = new ExtendedUser
             {
                 UserName = model.UserName,
-                FullName = model.FullName
+                FullName = model.FullName,
+                Email = model.UserName
 
             };
             user.Addresses.Add(new Address
@@ -98,6 +99,10 @@ namespace Pluralsight.AspNetDemo.Controllers
 
         var identityResult =  await  UserManager.CreateAsync(user, model.Password);
             if (identityResult.Succeeded) {
+             var token =   await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+           var confirmUrl =     Url.Action("ConfirmEmail","Account",new { userid = user.Id,token= token},Request.Url.Scheme);
+
+                await UserManager.SendEmailAsync(user.Id, "Email Confirmation", $"Use link to confirm email: {confirmUrl}");
                 return RedirectToAction("Index","Home");
             }
 
@@ -108,10 +113,14 @@ namespace Pluralsight.AspNetDemo.Controllers
             return View(model);
         }
 
-        // GET: Account
-        public ActionResult Index()
+        public async Task<ActionResult> ConfirmEmail(string userid, string token)
         {
-            return View();
+            var identityResult = await UserManager.ConfirmEmailAsync(userid, token);
+            if (!identityResult.Succeeded)
+            {
+                return View("Error");
+            }
+            return RedirectToAction("Index", "Home");
         }
     }
 }

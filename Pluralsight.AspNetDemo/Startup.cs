@@ -30,6 +30,8 @@ namespace Pluralsight.AspNetDemo
                     var usermanager = new UserManager<ExtendedUser>(cont.Get<UserStore<ExtendedUser>>());
                     usermanager.RegisterTwoFactorProvider("SMS", new PhoneNumberTokenProvider<ExtendedUser>() { MessageFormat ="Token{0}"});
                     usermanager.SmsService = new SmsService();
+                    usermanager.UserTokenProvider = new DataProtectorTokenProvider<ExtendedUser>(opt.DataProtectionProvider.Create());
+                    usermanager.EmailService = new EmailService();
                     return usermanager;
                 });
         
