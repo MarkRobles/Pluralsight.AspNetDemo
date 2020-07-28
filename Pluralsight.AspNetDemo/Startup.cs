@@ -9,6 +9,8 @@ using Microsoft.Owin.Security.Cookies;
 using Pluralsight.AspNetDemo.DAL;
 using Pluralsight.AspNetDemo.Models;
 using Pluralsight.AspNetDemo.Services;
+using Microsoft.Owin.Security.Google;
+using System.Configuration;
 
 [assembly: OwinStartup(typeof(Pluralsight.AspNetDemo.Startup))]
 
@@ -49,6 +51,22 @@ namespace Pluralsight.AspNetDemo
 
             app.UseTwoFactorSignInCookie(DefaultAuthenticationTypes.TwoFactorCookie, TimeSpan.FromMinutes(5));
             app.UseTwoFactorRememberBrowserCookie(DefaultAuthenticationTypes.TwoFactorRememberBrowserCookie);
+
+
+            //if this external signin cookie is after the google authenticator middleware(below) you will get an error
+            app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
+
+            //Configure google  authentication 
+            app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions
+            {
+                ClientId = ConfigurationManager.AppSettings["google:ClientId"],
+                ClientSecret = ConfigurationManager.AppSettings["google:ClientSecret"],
+                Caption = "Google"
+            }); ;
+
+
+
+
         }
     }
 }
