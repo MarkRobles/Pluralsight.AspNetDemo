@@ -22,7 +22,7 @@ namespace Pluralsight.AspNetDemo.DAL
             base.OnModelCreating(modelBuilder);
 
             var address = modelBuilder.Entity<Address>();
-            address.ToTable("AspNetUasersAddresses");
+            address.ToTable("AspNetUsersAddresses");
             address.HasKey(x => x.Id);
 
 
