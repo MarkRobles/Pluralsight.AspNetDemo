@@ -84,6 +84,14 @@ namespace Pluralsight.AspNetDemo.Controllers
         [HttpPost]
         public  async Task<ActionResult> Register(RegisterModel model) {
 
+            var result = await UserManager.PasswordValidator.ValidateAsync(model.Password);
+
+            if (!result.Succeeded)
+            {
+                ModelState.AddModelError("", result.Errors.FirstOrDefault());
+                return View(model);
+            }
+
             var user = new ExtendedUser
             {
                 UserName = model.UserName,

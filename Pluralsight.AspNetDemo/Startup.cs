@@ -34,6 +34,16 @@ namespace Pluralsight.AspNetDemo
                     usermanager.SmsService = new SmsService();
                     usermanager.UserTokenProvider = new DataProtectorTokenProvider<ExtendedUser>(opt.DataProtectionProvider.Create());
                     usermanager.EmailService = new EmailService();
+
+                    usermanager.UserValidator = new UserValidator<ExtendedUser>(usermanager){RequireUniqueEmail = true };
+                    usermanager.PasswordValidator = new PasswordValidator
+                    {
+                        RequireDigit = true,
+                        RequiredLength = 8,
+                        RequireLowercase = true,
+                        RequireNonLetterOrDigit = true,
+                        RequireUppercase = true
+                    };
                     return usermanager;
                 });
         
