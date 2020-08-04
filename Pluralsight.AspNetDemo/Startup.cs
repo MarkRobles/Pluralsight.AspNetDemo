@@ -27,31 +27,31 @@ namespace Pluralsight.AspNetDemo
             app.CreatePerOwinContext<UserStore<ExtendedUser>>((opt, cont) => new UserStore<ExtendedUser>(cont.Get<ExtendedUserDbContext>()));
             app.CreatePerOwinContext<ApplicationUserManager>(ApplicationUserManager.Create);
         
-            app.CreatePerOwinContext<UserManager<ExtendedUser>>(
-                (opt, cont) =>
-                {
-                    var usermanager = new UserManager<ExtendedUser>(cont.Get<UserStore<ExtendedUser>>());
-                    usermanager.RegisterTwoFactorProvider("SMS", new PhoneNumberTokenProvider<ExtendedUser>() { MessageFormat ="Token{0}"});
-                    usermanager.SmsService = new SmsService();
-                    usermanager.UserTokenProvider = new DataProtectorTokenProvider<ExtendedUser>(opt.DataProtectionProvider.Create());
-                    usermanager.EmailService = new EmailService();
+            //app.CreatePerOwinContext<UserManager<ExtendedUser>>(
+            //    (opt, cont) =>
+            //    {
+            //        var usermanager = new UserManager<ExtendedUser>(cont.Get<UserStore<ExtendedUser>>());
+            //        usermanager.RegisterTwoFactorProvider("SMS", new PhoneNumberTokenProvider<ExtendedUser>() { MessageFormat ="Token{0}"});
+            //        usermanager.SmsService = new SmsService();
+            //        usermanager.UserTokenProvider = new DataProtectorTokenProvider<ExtendedUser>(opt.DataProtectionProvider.Create());
+            //        usermanager.EmailService = new EmailService();
 
-                    usermanager.UserValidator = new UserValidator<ExtendedUser>(usermanager){RequireUniqueEmail = true };
-                    usermanager.PasswordValidator = new PasswordValidator
-                    {
-                        RequireDigit = true,
-                        RequiredLength = 8,
-                        RequireLowercase = true,
-                        RequireNonLetterOrDigit = true,
-                        RequireUppercase = true
-                    };
+            //        usermanager.UserValidator = new UserValidator<ExtendedUser>(usermanager){RequireUniqueEmail = true };
+            //        usermanager.PasswordValidator = new PasswordValidator
+            //        {
+            //            RequireDigit = true,
+            //            RequiredLength = 8,
+            //            RequireLowercase = true,
+            //            RequireNonLetterOrDigit = true,
+            //            RequireUppercase = true
+            //        };
 
-                    //Configure User lock   Out
-                    usermanager.UserLockoutEnabledByDefault = true;
-                    usermanager.MaxFailedAccessAttemptsBeforeLockout = 2;
-                    usermanager.DefaultAccountLockoutTimeSpan = TimeSpan.FromMinutes(3);
-                    return usermanager;
-                });
+            //        //Configure User lock   Out
+            //        usermanager.UserLockoutEnabledByDefault = true;
+            //        usermanager.MaxFailedAccessAttemptsBeforeLockout = 2;
+            //        usermanager.DefaultAccountLockoutTimeSpan = TimeSpan.FromMinutes(3);
+            //        return usermanager;
+            //    });
 
 
             app.CreatePerOwinContext<ApplicationRoleManager>(ApplicationRoleManager.Create);
@@ -59,7 +59,7 @@ namespace Pluralsight.AspNetDemo
             //Cookie stuff
             app.CreatePerOwinContext<SignInManager<ExtendedUser,string>>(
                 (opt, cont) =>
-                new SignInManager<ExtendedUser, string>(cont.Get<UserManager<ExtendedUser>>(), cont.Authentication));
+                new SignInManager<ExtendedUser, string>(cont.Get<ApplicationUserManager>(), cont.Authentication));
 
 
             app.UseCookieAuthentication(new CookieAuthenticationOptions
@@ -67,7 +67,7 @@ namespace Pluralsight.AspNetDemo
                 AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
                 Provider = new CookieAuthenticationProvider
                 {
-                    OnValidateIdentity = SecurityStampValidator.OnValidateIdentity<UserManager<ExtendedUser, string>, ExtendedUser>(
+                    OnValidateIdentity = SecurityStampValidator.OnValidateIdentity<ApplicationUserManager, ExtendedUser>(
                     validateInterval: TimeSpan.FromSeconds(3),//change to 30 minutes or 1 hour after test based on your cookie lifetime
                     regenerateIdentity: (manager, user) => manager.CreateIdentityAsync(user, DefaultAuthenticationTypes.ApplicationCookie))
                 }

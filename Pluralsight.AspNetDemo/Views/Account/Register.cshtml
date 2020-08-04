@@ -28,9 +28,6 @@
             <br>
             @Html.TextBoxFor(x => x.Password);
             <br>
-
-
-
             <div class="col-12">
                 <strong>@Html.Label("Roles")</strong>
                 <br>
@@ -47,6 +44,7 @@
 <hr>
 @section Scripts {
     @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
 }
 <script>
     $(function () {

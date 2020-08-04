@@ -91,7 +91,7 @@ namespace Pluralsight.AspNetDemo.Controllers
             }
         }
 
-
+        [Authorize(Roles = "IT")]
         public ActionResult Register() {
             CreateDropDownRoles();
 
@@ -113,47 +113,53 @@ namespace Pluralsight.AspNetDemo.Controllers
 
         }
 
-
+        [Authorize(Roles = "IT")]
         [HttpPost]
         public  async Task<ActionResult> Register(RegisterModel model) {
 
-            var result = await UserManager.PasswordValidator.ValidateAsync(model.Password);
 
-            if (!result.Succeeded)
+            if(ModelState.IsValid)
             {
-                ModelState.AddModelError("", result.Errors.FirstOrDefault());
-                return View(model);
+                var result = await UserManager.PasswordValidator.ValidateAsync(model.Password);
+
+                if (!result.Succeeded)
+                {
+                    ModelState.AddModelError("", result.Errors.FirstOrDefault());
+                    return View(model);
+                }
+
+                var user = new ExtendedUser
+                {
+                    UserName = model.UserName,
+                    FullName = model.FullName,
+                    Email = model.UserName
+
+                };
+                user.Addresses.Add(new Address
+                {
+                    AddressLine = model.AddressLine,
+                    Country = model.Country,
+                    UserId = user.Id
+                });
+
+
+                var identityResult = await UserManager.CreateAsync(user, model.Password);
+                if (identityResult.Succeeded)
+                {
+
+                    await AddRoleTouser(user.Id, model.role);
+
+
+                    var token = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+                    var confirmUrl = Url.Action("ConfirmEmail", "Account", new { userid = user.Id, token = token }, Request.Url.Scheme);
+
+                    await UserManager.SendEmailAsync(user.Id, "Email Confirmation", $"Use link to confirm email: {confirmUrl}");
+                    TempData["Message"] = string.Concat(model.UserName," created successfully");
+                    return RedirectToAction("Index", "uSER");
+                }
+                ModelState.AddModelError("", identityResult.Errors.FirstOrDefault());
             }
 
-            var user = new ExtendedUser
-            {
-                UserName = model.UserName,
-                FullName = model.FullName,
-                Email = model.UserName
-
-            };
-            user.Addresses.Add(new Address
-            {
-                AddressLine = model.AddressLine,
-                Country = model.Country,
-                UserId = user.Id
-            });
-
-
-        var identityResult =  await  UserManager.CreateAsync(user, model.Password);
-            if (identityResult.Succeeded) {
-
-            await  AddRoleTouser(user.Id,model.role);
-
-
-             var token =   await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-           var confirmUrl =     Url.Action("ConfirmEmail","Account",new { userid = user.Id,token= token},Request.Url.Scheme);
-
-                await UserManager.SendEmailAsync(user.Id, "Email Confirmation", $"Use link to confirm email: {confirmUrl}");
-                return RedirectToAction("Index","Home");
-            }
-
-            ModelState.AddModelError("", identityResult.Errors.FirstOrDefault());
             return View(model);
         }
 
