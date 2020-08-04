@@ -25,7 +25,8 @@ namespace Pluralsight.AspNetDemo
             const string connectionstring = "Data Source=DESKTOP-T5Q7DPS;Initial Catalog=PluralsightAspNetDemo;  Integrated Security=SSPI;";
             app.CreatePerOwinContext(() => new ExtendedUserDbContext(connectionstring));
             app.CreatePerOwinContext<UserStore<ExtendedUser>>((opt, cont) => new UserStore<ExtendedUser>(cont.Get<ExtendedUserDbContext>()));
-           //I modify this for 2FV
+            app.CreatePerOwinContext<ApplicationUserManager>(ApplicationUserManager.Create);
+        
             app.CreatePerOwinContext<UserManager<ExtendedUser>>(
                 (opt, cont) =>
                 {

@@ -2,6 +2,7 @@
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
+using Pluralsight.AspNetDemo.DAL;
 using Pluralsight.AspNetDemo.Models;
 using System;
 using System.Collections.Generic;
@@ -16,9 +17,16 @@ namespace Pluralsight.AspNetDemo.Controllers
 {
     public class AccountController : Controller
     {
-        public UserManager<ExtendedUser> UserManager => HttpContext.GetOwinContext().Get<UserManager<ExtendedUser>>();
+        public ApplicationUserManager UserManager => HttpContext.GetOwinContext().Get<ApplicationUserManager>();
         public SignInManager<ExtendedUser, string> SignInManager => HttpContext.GetOwinContext().Get<SignInManager<ExtendedUser, string>>();
 
+        private ApplicationRoleManager _roleManager
+        {
+            get
+            {
+                return HttpContext.GetOwinContext().Get<ApplicationRoleManager>();
+            }
+        }
 
         public ActionResult Login() {
             return View();
@@ -85,7 +93,24 @@ namespace Pluralsight.AspNetDemo.Controllers
 
 
         public ActionResult Register() {
+            CreateDropDownRoles();
+
             return View();
+        }
+
+
+        public void CreateDropDownRoles()
+        {
+            var roles = _roleManager.Roles.ToList();
+
+            List<SelectListItem> dropDownItems = new List<SelectListItem>();
+            foreach (var role in roles)
+            {
+                SelectListItem item = new SelectListItem { Value = role.Id, Text = role.Name };
+                dropDownItems.Add(item);
+            }
+            ViewBag.Roles = dropDownItems;
+
         }
 
 
@@ -114,8 +139,13 @@ namespace Pluralsight.AspNetDemo.Controllers
                 UserId = user.Id
             });
 
+
         var identityResult =  await  UserManager.CreateAsync(user, model.Password);
             if (identityResult.Succeeded) {
+
+            await  AddRoleTouser(user.Id,model.role);
+
+
              var token =   await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
            var confirmUrl =     Url.Action("ConfirmEmail","Account",new { userid = user.Id,token= token},Request.Url.Scheme);
 
@@ -123,11 +153,32 @@ namespace Pluralsight.AspNetDemo.Controllers
                 return RedirectToAction("Index","Home");
             }
 
-
-            
-
             ModelState.AddModelError("", identityResult.Errors.FirstOrDefault());
             return View(model);
+        }
+
+
+        public async Task<ActionResult> AddRoleTouser(string Id, string role)
+        {
+            try
+            {
+                //role = "User";
+                var roles = await UserManager.GetRolesAsync(Id);
+                if (roles.Any())
+                {
+                    TempData["Message"] = "Esta aplicacion solo permite un rol por usuario";
+                }
+
+            var  result =     await UserManager.AddToRoleAsync(Id, role);
+
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                TempData["Message"] = ex.Message;
+                return View("Error");
+            }
+
         }
 
         public async Task<ActionResult> ConfirmEmail(string userid, string token)
