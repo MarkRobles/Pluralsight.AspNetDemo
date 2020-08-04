@@ -18,6 +18,12 @@ namespace Pluralsight.AspNetDemo
                 url: "{controller}/{action}/{id}",
                 defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
             );
+
+            routes.MapRoute(
+           "ErrorHandler",
+           "Error/{action}/{errMsg}",
+           new { controller = "Error", action = "Unauthorized", errMsg = UrlParameter.Optional }
+           );
         }
     }
 }

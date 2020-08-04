@@ -13,18 +13,19 @@ using System.Web.Mvc;
 
 namespace Pluralsight.AspNetDemo.Controllers
 {
+
     public class UserController : Controller
     {
 
         public ApplicationUserManager UserManager => HttpContext.GetOwinContext().Get<ApplicationUserManager>();
-
+        [Authorize(Roles = "IT,User")]
         public ActionResult Index()
         {
             return View(UserManager.Users.ToList());
         }
 
 
-
+        [Authorize(Roles = "IT,User")]
         public async  Task<ActionResult> Details(string id) {
             var user = await UserManager.FindByIdAsync(id);
             if (user != null)
@@ -38,6 +39,7 @@ namespace Pluralsight.AspNetDemo.Controllers
             }
         }
 
+        [Authorize(Roles = "IT,User")]
         public async Task<ActionResult> Edit(string id) {
 
             var user = await UserManager.FindByIdAsync(id);
@@ -52,7 +54,7 @@ namespace Pluralsight.AspNetDemo.Controllers
             }
         }
 
-
+        [Authorize(Roles = "IT,User")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(ExtendedUser model) {
@@ -78,7 +80,7 @@ namespace Pluralsight.AspNetDemo.Controllers
            
         }
 
-
+        [Authorize(Roles = "IT")]
         public async Task<ActionResult> Delete(string id)
         {
             var user = await UserManager.FindByIdAsync(id);
@@ -93,6 +95,7 @@ namespace Pluralsight.AspNetDemo.Controllers
             }
         }
 
+        [Authorize(Roles = "IT")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Delete(string id, FormCollection form)
