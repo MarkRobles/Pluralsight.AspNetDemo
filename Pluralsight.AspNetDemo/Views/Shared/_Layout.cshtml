@@ -26,11 +26,19 @@
                     <li>@Html.ActionLink("Contacto", "Contact", "Home")</li>
                     <li>@Html.ActionLink("Register", "Register", "Account")</li>
                     <li>@Html.ActionLink("Login", "Login", "Account")</li>
+                    <li>@Html.ActionLink("Users", "Index", "User")</li>
+                    <li>@Html.ActionLink("Roles", "Index", "Role")</li>
                 </ul>
             </div>
         </div>
     </div>
     <div class="container body-content">
+        @if (TempData["Message"] != null)
+        {
+            <div class="alert alert-info">
+                @TempData["Message"]
+            </div>
+        }
         @RenderBody()
         <hr />
         <footer>

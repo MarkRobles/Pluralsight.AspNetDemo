@@ -22,7 +22,7 @@ namespace Pluralsight.AspNetDemo
         {
             // Para obtener más información sobre cómo configurar la aplicación, visite https://go.microsoft.com/fwlink/?LinkID=316888
 
-            const string connectionstring = "Data Source=(LocalDb)\\MSSQLLocalDB;Initial Catalog=Pluralsight.AspNetIdentityDemo.Module2.2;Integrated Security=SSPI;";
+            const string connectionstring = "Data Source=DESKTOP-T5Q7DPS;Initial Catalog=PluralsightAspNetDemo;  Integrated Security=SSPI;";
             app.CreatePerOwinContext(() => new ExtendedUserDbContext(connectionstring));
             app.CreatePerOwinContext<UserStore<ExtendedUser>>((opt, cont) => new UserStore<ExtendedUser>(cont.Get<ExtendedUserDbContext>()));
            //I modify this for 2FV
@@ -51,7 +51,9 @@ namespace Pluralsight.AspNetDemo
                     usermanager.DefaultAccountLockoutTimeSpan = TimeSpan.FromMinutes(3);
                     return usermanager;
                 });
-        
+
+
+            app.CreatePerOwinContext<ApplicationRoleManager>(ApplicationRoleManager.Create);
 
             //Cookie stuff
             app.CreatePerOwinContext<SignInManager<ExtendedUser,string>>(
