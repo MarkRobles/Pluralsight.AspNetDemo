@@ -13,7 +13,7 @@ using System.Web.Mvc;
 
 namespace Pluralsight.AspNetDemo.Controllers
 {
-
+    [Authorize(Roles ="IT")]
     public class RoleController : Controller
     {
 
@@ -38,7 +38,7 @@ namespace Pluralsight.AspNetDemo.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(ExtentedRole model)
+        public async Task<ActionResult> Create(ExtendedRole model)
         {
             var result = await _roleManager.CreateAsync(model);
             if (result.Succeeded)
@@ -87,7 +87,7 @@ namespace Pluralsight.AspNetDemo.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(ExtentedRole model)
+        public async Task<ActionResult> Edit(ExtendedRole model)
         {
             var status = await _roleManager.UpdateAsync(model);
             if (status.Succeeded)

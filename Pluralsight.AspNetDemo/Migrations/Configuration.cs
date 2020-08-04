@@ -1,5 +1,8 @@
 namespace Pluralsight.AspNetDemo.Migrations
 {
+    using Antlr.Runtime.Tree;
+    using Microsoft.AspNet.Identity.EntityFramework;
+    using Pluralsight.AspNetDemo.Models;
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Migrations;
@@ -14,18 +17,39 @@ namespace Pluralsight.AspNetDemo.Migrations
 
         protected override void Seed(Pluralsight.AspNetDemo.DAL.ExtendedUserDbContext context)
         {
-            //  This method will be called after migrating to the latest version.
+            var ItRole = new ExtendedRole
+            {
+                Id = Guid.NewGuid().ToString(),
+                Name = "IT",
+                Details = "Super admin"
+            };
 
-            //  You can use the DbSet<T>.AddOrUpdate() helper extension method 
-            //  to avoid creating duplicate seed data. E.g.
-            //
-            //    context.People.AddOrUpdate(
-            //      p => p.FullName,
-            //      new Person { FullName = "Andrew Peters" },
-            //      new Person { FullName = "Brice Lambson" },
-            //      new Person { FullName = "Rowan Miller" }
-            //    );
-            //
+            context.SaveChanges();
+            var UserAdmin = new ExtendedUser
+            {
+                UserName = "marcos92robles@gmail.com",
+                Email = "marcos92robles@gmail.com",
+                FullName = "Marcos Ivan Robles Hernandez",
+                PhoneNumber = "+523316901969"
+
+            };
+
+
+
+            context.SaveChanges();
+
+            var userRole = new IdentityUserRole
+            {
+                RoleId = ItRole.Id,
+                UserId = UserAdmin.Id
+            };
+
+
+            ItRole.Users.Add(userRole);
+
+            context.SaveChanges();
+
+            context.Roles.AddOrUpdate();
         }
     }
 }

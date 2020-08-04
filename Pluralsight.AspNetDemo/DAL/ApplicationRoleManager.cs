@@ -10,15 +10,15 @@ using System.Web;
 
 namespace Pluralsight.AspNetDemo.DAL
 {
-    public class ApplicationRoleManager : RoleManager<ExtentedRole>
+    public class ApplicationRoleManager : RoleManager<ExtendedRole>
     {
-        public ApplicationRoleManager(IRoleStore<ExtentedRole, string> roleStore)
+        public ApplicationRoleManager(IRoleStore<ExtendedRole, string> roleStore)
             : base(roleStore)
         {
         }
         public static ApplicationRoleManager Create(IdentityFactoryOptions<ApplicationRoleManager> options, IOwinContext context)
         {
-            var manager = new ApplicationRoleManager(new RoleStore<ExtentedRole>(context.Get<ExtendedUserDbContext>()));
+            var manager = new ApplicationRoleManager(new RoleStore<ExtendedRole>(context.Get<ExtendedUserDbContext>()));
             
             
             

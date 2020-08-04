@@ -6,7 +6,7 @@ using System.Web;
 
 namespace Pluralsight.AspNetDemo.Models
 {
-    public class ExtentedRole:IdentityRole
+    public class ExtendedRole:IdentityRole
     {
         public string Details { get; set; }
     }

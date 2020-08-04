@@ -181,6 +181,7 @@
     <Compile Include="Controllers\RoleController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="DAL\ApplicationRoleManager.cs" />
+    <Compile Include="DAL\ApplicationUserManager.cs" />
     <Compile Include="DAL\ExtendedUserDbContext.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -189,11 +190,16 @@
     <Compile Include="Migrations\202008032207245_AddRole.Designer.cs">
       <DependentUpon>202008032207245_AddRole.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202008041817218_AssignRoleToUser.cs" />
+    <Compile Include="Migrations\202008041817218_AssignRoleToUser.Designer.cs">
+      <DependentUpon>202008041817218_AssignRoleToUser.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Address.cs" />
+    <Compile Include="Models\ApplicationUserRole.cs" />
     <Compile Include="Models\ChooseProviderModel.cs" />
     <Compile Include="Models\ExtendedUser.cs" />
-    <Compile Include="Models\ExtentedRole.cs" />
+    <Compile Include="Models\ExtendedRole.cs" />
     <Compile Include="Models\ForgotPasswordModel.cs" />
     <Compile Include="Models\LoginModel.cs" />
     <Compile Include="Models\PasswordResetModel.cs" />
@@ -275,6 +281,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202008032207245_AddRole.resx">
       <DependentUpon>202008032207245_AddRole.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202008041817218_AssignRoleToUser.resx">
+      <DependentUpon>202008041817218_AssignRoleToUser.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

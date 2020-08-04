@@ -16,7 +16,7 @@ namespace Pluralsight.AspNetDemo.Controllers
     public class UserController : Controller
     {
 
-        public UserManager<ExtendedUser> UserManager => HttpContext.GetOwinContext().Get<UserManager<ExtendedUser>>();
+        public ApplicationUserManager UserManager => HttpContext.GetOwinContext().Get<ApplicationUserManager>();
 
         public ActionResult Index()
         {

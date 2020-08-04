@@ -21,7 +21,10 @@ namespace Pluralsight.AspNetDemo.DAL
 
         public ExtendedUserDbContext(string connectionString) : base(connectionString) { }
 
-      
+
+        public DbSet<ApplicationUserRole> ApplicationUserRole { get; set; }
+
+
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

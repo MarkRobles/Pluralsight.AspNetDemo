@@ -12,5 +12,7 @@ namespace Pluralsight.AspNetDemo.Models
         public string FullName { get; set; }
         public string AddressLine { get; set; }
         public string Country { get; set; }
+
+        public string role { get; set; }
     }
 }
