@@ -13,10 +13,16 @@ namespace Pluralsight.AspNetDemo.DAL
     public class ExtendedUserDbContext: IdentityDbContext<ExtendedUser>
     {
 
-
+        public ExtendedUserDbContext()
+        {
+                
+        }
         public DbSet<Address> Addresses { get; set; }
 
         public ExtendedUserDbContext(string connectionString) : base(connectionString) { }
+
+      
+
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
